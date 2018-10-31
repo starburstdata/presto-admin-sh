@@ -189,7 +189,7 @@ function _sudo_execute() {
 function _execute() {
     for node in $COORDINATOR_IP $WORKER_IPS; do
         _log "Executing '$@' on $node:"
-        ssh -i "$IDENTITY_KEY" "$USER@$node" "$@"
+        ssh -t -i "$IDENTITY_KEY" "$USER@$node" "$@"
     done
 }
 
