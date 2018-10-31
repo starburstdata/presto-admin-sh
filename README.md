@@ -63,7 +63,7 @@ vim ~/.presto-admin-sh/cluster_name/configuration/catalog/hive.properties
 ./presto-admin.sh stop cluster_name
 ```
 
-1. Uninstall `presto-server-rpm-${presto-version}.rpm` on all nodes.
+9. Uninstall `presto-server-rpm-${presto-version}.rpm` on all nodes.
 
 ```
 ./presto-admin.sh uninstall cluster_name
