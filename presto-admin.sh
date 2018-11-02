@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-COMMANDS="help init status rpm_deploy config_deploy install uninstall start restart stop execute"
+COMMANDS="help init status tgz_deploy config_deploy install uninstall start restart stop execute"
 
 CLUSTER_NAME=
 CLUSTER_CONFIG_DIR=
