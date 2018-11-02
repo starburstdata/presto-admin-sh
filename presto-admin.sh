@@ -21,11 +21,11 @@ $0 command CLUSTER_NAME [arguments]
 Commands:
   help          -   display this window
   init          -   init the cluster topology
-  rpm_deploy    -
+  tgz_deploy    -
     arguments:
-        rpm     -   path to Presto rpm file
+        tgz     -   path to Presto tgz file
   config_deploy -   deploys configuration on the cluster
-  install       -   install Presto on the cluster, requires rpm_deploy to be run first
+  install       -   install Presto on the cluster, requires tgz_deploy to be run first
   uninstall     -   uninstall Presto from the cluster, requires install to be run first
   status        -   display the status of the cluster
   start         -   start Presto on the cluster
@@ -100,48 +100,50 @@ EOF
 function status() {
     _load_cluster "$1"
     _test_cluster
-    _sudo_execute 'service presto status || true'
+    _sudo_execute 'status presto-server || true'
 }
 
 function start() {
     _load_cluster "$1"
-    _sudo_execute 'service presto start || true'
+    _sudo_execute 'start presto-server || true'
 }
 
 function restart() {
     _load_cluster "$1"
-    _sudo_execute 'service presto restart || true'
+    _sudo_execute 'restart presto-server || true'
 }
 
 function stop() {
     _load_cluster "$1"
-    _sudo_execute 'service presto stop || true'
+    _sudo_execute 'stop presto-server || true'
 }
 
-function rpm_deploy() {
+function tgz_deploy() {
     _load_cluster "$1"
-    rpm_file="$2"
-    if [[ ! -f "$rpm_file" ]]; then
-        _err "RPM file $rpm_file does not exists"
+    tgz_file="$2"
+    if [[ ! -f "$tgz_file" ]]; then
+        _err "TGZ file $tgz_file does not exists"
     fi
     _test_cluster
 
     for node in $COORDINATOR_IP $WORKER_IPS; do
-        _log "Uploading: $rpm_file on $node"
-        scp -i "$IDENTITY_KEY" "$rpm_file" "$USER@$node:/tmp/presto.rpm"
+        _log "Uploading: $tgz_file on $node"
+        scp -i "$IDENTITY_KEY" "$tgz_file" "$USER@$node:/tmp/presto.tar.gz"
     done
 }
 
 function install() {
     _load_cluster "$1"
 
-    _sudo_execute rpm -i /tmp/presto.rpm
+    _sudo_execute mkdir /usr/lib/presto && tar xvzf --strip 1 /tmp/presto.tar.gz /usr/lib/presto
 }
 
 function uninstall() {
     _load_cluster "$1"
 
-    _sudo_execute rpm -e presto-server-rpm
+    _sudo_execute rm -rf /tmp/presto-backup
+    _sudo_execute mkdir /tmp/presto-backup && cp -R /usr/lib/presto/* /tmp/presto-backup
+    _sudo_execute rm -rf /usr/lib/presto
 }
 
 function execute() {
@@ -174,7 +176,7 @@ function config_deploy() {
 }
 
 function _test_cluster() {
-    _execute rpm -qa presto-server-rpm
+    #_execute rpm -qa presto-server-rpm
 }
 
 function _sudo_execute() {
