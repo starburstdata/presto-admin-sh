@@ -160,17 +160,17 @@ function config_deploy() {
         _log "Updating worker ($worker) configuration"
         scp -i "$IDENTITY_KEY" "$WORKER_CONFIG_DIR"/* "$USER@$worker:/tmp/presto_config"
     done
-    _sudo_execute cp '/tmp/presto_config/*' /etc/presto
+    _sudo_execute cp '/tmp/presto_config/*' /etc/presto/conf
 
     _execute rm -rf /tmp/presto_config
     _execute mkdir -p /tmp/presto_config
-    _sudo_execute mkdir -p /etc/presto/catalog
+    _sudo_execute mkdir -p /etc/presto/conf/catalog
     scp -i "$IDENTITY_KEY" "$CATALOG_CONFIG_DIR"/* "$USER@$COORDINATOR_IP:/tmp/"
     for node in $COORDINATOR_IP $WORKER_IPS; do
         _log "Updating catalog configuration ($node)"
         scp -i "$IDENTITY_KEY" "$CATALOG_CONFIG_DIR"/* "$USER@$node:/tmp/presto_config"
     done
-    _sudo_execute cp '/tmp/presto_config/*' /etc/presto/catalog
+    _sudo_execute cp '/tmp/presto_config/*' /etc/presto/conf/catalog
 }
 
 function _test_cluster() {
