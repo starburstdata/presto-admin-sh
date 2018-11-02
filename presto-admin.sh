@@ -177,6 +177,7 @@ function config_deploy() {
 
 function _test_cluster() {
     #_execute rpm -qa presto-server-rpm
+    echo test
 }
 
 function _sudo_execute() {
