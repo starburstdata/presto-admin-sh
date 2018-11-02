@@ -134,16 +134,12 @@ function tgz_deploy() {
 
 function install() {
     _load_cluster "$1"
-
-    _sudo_execute mkdir /usr/lib/presto && tar xvzf --strip 1 /tmp/presto.tar.gz /usr/lib/presto
+    _sudo_execute '(mkdir /usr/lib/presto || true) && tar xvzf /tmp/presto.tar.gz --strip-components 1 -C /usr/lib/presto'
 }
 
 function uninstall() {
     _load_cluster "$1"
-
-    _sudo_execute rm -rf /tmp/presto-backup
-    _sudo_execute mkdir /tmp/presto-backup && cp -R /usr/lib/presto/* /tmp/presto-backup
-    _sudo_execute rm -rf /usr/lib/presto
+    _sudo_execute 'rm -rf /tmp/presto-backup && mkdir /tmp/presto-backup && cp -R /usr/lib/presto/* /tmp/presto-backup && rm -rf /usr/lib/presto'
 }
 
 function execute() {
